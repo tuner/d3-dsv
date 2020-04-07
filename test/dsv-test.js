@@ -115,6 +115,12 @@ tape("dsv(\"|\").parseRows(string, row) invokes row(d, i) for each row d, in ord
   test.end();
 });
 
+tape("dsv(\"|\", { na }).parseRows(string) returns NAs as undefined", function(test) {
+  test.deepEqual(dsv.dsvFormat("|", { na: "NA" }).parseRows("a|NA|c|NA\n1|NA|\"NA\"|NA"), [["a", undefined, "c", undefined], ["1", undefined, "NA", undefined]]);
+  test.deepEqual(dsv.dsvFormat("|", { na: "" }).parseRows("a||c|\n1||\"\"|"), [["a", undefined, "c", undefined], ["1", undefined, "", undefined]]);
+  test.end();
+});
+
 tape("dsv(\"|\").format(array) takes an array of objects as input", function(test) {
   test.deepEqual(psv.format([{a: 1, b: 2, c: 3}]), "a|b|c\n1|2|3");
   test.end();

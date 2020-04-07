@@ -70,6 +70,12 @@ export default function(delimiter, options) {
     return rows;
   }
 
+  var handleNA = options && options.na !== undefined
+    ? function(slice) {
+      return slice !== options.na ? slice : undefined;
+    }
+    : function(slice) { return slice }
+
   function parseRows(text, f) {
     var rows = [], // output rows
         N = text.length,
@@ -102,11 +108,11 @@ export default function(delimiter, options) {
         if ((c = text.charCodeAt(i = I++)) === NEWLINE) eol = true;
         else if (c === RETURN) { eol = true; if (text.charCodeAt(I) === NEWLINE) ++I; }
         else if (c !== DELIMITER) continue;
-        return text.slice(j, i);
+        return handleNA(text.slice(j, i));
       }
 
       // Return last token before EOF.
-      return eof = true, text.slice(j, N);
+      return eof = true, handleNA(text.slice(j, N));
     }
 
     while ((t = token()) !== EOF) {
